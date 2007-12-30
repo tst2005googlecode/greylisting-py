@@ -1,0 +1,4 @@
+TODO
+
+- Check if mysql queries are protected to SQL injection
+- Complete exim intallation instructions (db, exim)
