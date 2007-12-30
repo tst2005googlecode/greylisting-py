@@ -1,8 +1,9 @@
 #!/usr/bin/python
+# encoding: utf-8
 
 # GREYLISTING SCRIPT
 # By: Jean-Pascal Houde <jp@l3i.ca>
-# Based on exim.pl script by Roman Festchook ( http://llab.zhitomir.net/?greylist )
+# Inspired by the exim.pl script by Roman Festchook ( http://llab.zhitomir.net/?greylist )
 
 # Parameters : 
 # greylisting.py <local-part> <domain> <sender-address> <sender-host-address>
@@ -15,6 +16,8 @@
 # 4 - excluded - No greylisting done
 # 5 - whitelisted
 
+from config import *
+
 RESULT_GREYLIST_DEFER = 0 # Message greylisted, try again later
 # You should accept the message for return values > 0
 RESULT_GREYLIST_OK = 1 
@@ -24,18 +27,6 @@ RESULT_EXCLUDED = 4
 RESULT_WHITELIST = 5
 
 RESULT_TEXT = ['GREYLIST', 'OK', 'SPF_PASS', 'ERROR', 'EXCLUDED', 'WHITELIST']
-
-# MySQL connection parameters
-DB_HOST = "localhost"
-DB_NAME = "exim_greylist"
-DB_USER = "exim"
-DB_PASSWD = ""
-
-# If True, greylisting will be disabled if sender pass SPF test
-USE_SPF = True
-
-# Always exclude these mailbox names
-EXCLUDE_MAILBOXES = ['abuse', 'postmaster']
 
 def testSPF(helo, emailfrom, host):
     spfResult = spf.check(host, emailfrom, helo)
