@@ -1,13 +1,27 @@
 #!/usr/bin/python
 # encoding: utf-8
 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# *****************************************************************************************
 # GREYLISTING SCRIPT
 # By: Jean-Pascal Houde <jp@l3i.ca>
 # Inspired by the exim.pl script by Roman Festchook ( http://llab.zhitomir.net/?greylist )
-
+# *****************************************************************************************
 # Parameters : 
 # greylisting.py <local-part> <domain> <sender-address> <sender-host-address>
-
+# 
 # Return values :
 # 0 - Try again - greylisting in progress
 # 1 - OK, deliver the email
@@ -15,6 +29,7 @@
 # 3 - Error - An error was encountered while greylisting (you should accept the email, and log the problem if possible)
 # 4 - excluded - No greylisting done
 # 5 - whitelisted
+# *****************************************************************************************
 
 from config import *
 
