@@ -1,4 +1,68 @@
-BASE INSTALLATION INSTRUCTIONS
+Introduction
 
-- setup mysql database...
+greylisting.py is a greylisting script, using a MySQL database to store the greylist and some configuration options.
+Dependencies
 
+To work properly, greylisting.py requires that some Python modules be installed first.
+
+    * MySQL-python
+    * pydns
+    * pyspf
+    * IPv4-Utils 
+
+All packages, except pydns, can be installed using the easy_install command (e.g. easy_install MySQL-python). If you don't have easy_install on your system, you can download it from 
+http://peak.telecommunity.com/DevCenter/EasyInstall#installing-easy-install
+
+Also, you must download the "pydns" package from http://pydns.sourceforge.net
+Installing the database
+
+You must prepare a MySQL database and load the database structure before running greylisting.py. First, create a database, and preferably a separate user that you will use to connect to the 
+database. Finally, execute the SQL queries from DATABASE.sql, which is bundled with greylisting.py.
+Configuring the script
+
+The basic script configuration is located in the config.py file, which should be in the same directory as the main greylisting.py file.
+
+Just complete the database connection information, and if you want, modify the other options documented in the file. Remember to follow the Python syntax, as this file will be parsed by the 
+Python interpreter.
+Additional settings in database
+
+There are some more settings that are stored in the database. Some of them are optional, like the hosts and net whitelists. More importantly, you should insert rows in the GREYLIST_ENABLE 
+to enable greylisting on your domains/addresses. You can use an asterisk as the address, which will enable the whole domain, or provide the domain and the address, which will enable 
+greylisting on just one address.
+Testing the script
+
+You can test the script by calling it directly from a shell, using a command line similar to this one :
+
+./greylisting.py jphoude jphoude.qc.ca test@hotmail.com 127.0.0.1 localhost
+
+The parameters are, in order : <local-part> <domain> <sender-address> <sender-host-address> <helo-name>
+Using greylisting with Exim
+
+Add this in the begin acl section of your exim.conf file.
+
+# **** greylisting ACL ****
+greylist_acl:
+    warn set acl_m8 = ${run{/home/jphoude/greylisting-py/greylisting-py/greylisting.py $local_part $domain $sender_address $sender_host_address $sender_helo_name}\
+                        {$value}{error}}
+         log_message = greylisting ACL result: $acl_m8
+
+    accept
+        condition = ${if eq{$acl_m8}{greylist}{1}}
+
+    deny
+
+Add this to your acl_check_rcpt (RCPT ACL). Usually it should be inserted somewhere before the line that accepts local mail (before accept domains = +local_domains).
+
+  # greylisting check (except bounces, which are checked in acl_data)
+  defer !senders = : postmaster@*
+        acl = greylist_acl
+        message = greylisted - try again later. See http://en.wikipedia.org/wiki/Greylisting
+
+And finally, add this to your acl_check_content (DATA ACL).
+
+  # greylisting check for bounces
+  defer senders = : postmaster@*
+        acl = greylist_acl
+        message = greylisted - try again later. See http://en.wikipedia.org/wiki/Greylisting
+
+That should be all you need to do! You should see greylisting results in the Exim main log file, and in the DB. 

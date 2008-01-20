@@ -1,0 +1,9 @@
+Python greylisting script, using a MySQL database. The script has been made to work with Exim, but could be used by other MTAs, or adapted to use another database.
+
+The script does SPF check on incoming mail, if enabled in configuration file. If the SPF test passes, it will skip the greylist (since a domain supporting SPF is most likely to succeed the greylisting test also.)
+
+The script can also use whitelists, with the ability to whitelist single IP addresses, and subnets using CIDR.
+
+Another script is provided (clear-greylist.py) to cleanup the database, and should be executed in a cron job.
+
+For installation instructions, see the INSTALL file.
