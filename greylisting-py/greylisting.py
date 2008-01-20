@@ -60,7 +60,7 @@ def testSPF(helo, mailFrom, hostAddr):
 def checkEnabled(lp, domain):
     """check if a given address (local part, domain) should be checked for greylisting. Greylisting has to be enabled in the
        GREYLIST_ENABLE table for each address or domain"""
-    cur.execute("SELECT 1 FROM GREYLIST_ENABLE WHERE (username = %s OR username = %s) AND domain = %s", ('%', lp, domain))
+    cur.execute("SELECT 1 FROM GREYLIST_ENABLE WHERE (username = %s OR username = %s) AND domain = %s", ('*', lp, domain))
     
     return (lp not in EXCLUDE_MAILBOXES) and cur.fetchone()
 
@@ -112,8 +112,8 @@ def greylist(localPart, domain, mailFrom, hostAddr, helo):
     if not statusArray:
         # Not record found, insert one
         cur.execute("INSERT INTO GREYLIST VALUES (NULL, %s, %s, %s, \
-                                                  DATE_ADD(NOW(), INTERVAL 15 MINUTE), \
-                                                  DATE_ADD(NOW(), INTERVAL 36 DAY), 1, 0, 0, \
+                                                  DATE_ADD(NOW(), INTERVAL " + INITIAL_BLOCK +" MINUTE), \
+                                                  DATE_ADD(NOW(), INTERVAL " + EXPIRE_DELAI + " DAY), 1, 0, 0, \
                                                   'AUTO', NOW(), NULL)", (hostAddr, mailFrom, emailto))
         return 'greylist'
         
@@ -146,5 +146,5 @@ value = greylist(*args)
 # log mail
 cur.execute("INSERT INTO MAIL_LOG VALUES(NULL, NOW(), %s, %s, %s, %s)", ('%s@%s' % (args[0], args[1]), args[2], args[3], value))
 
-print value
+sys.stdout.write(value)
 sys.exit(0)
