@@ -112,8 +112,8 @@ def greylist(localPart, domain, mailFrom, hostAddr, helo):
     if not statusArray:
         # Not record found, insert one
         cur.execute("INSERT INTO GREYLIST VALUES (NULL, %s, %s, %s, \
-                                                  DATE_ADD(NOW(), INTERVAL " + INITIAL_BLOCK +" MINUTE), \
-                                                  DATE_ADD(NOW(), INTERVAL " + EXPIRE_DELAI + " DAY), 1, 0, 0, \
+                                                  DATE_ADD(NOW(), INTERVAL " + str(INITIAL_BLOCK) +" MINUTE), \
+                                                  DATE_ADD(NOW(), INTERVAL " + str(EXPIRE_DELAY) + " DAY), 1, 0, 0, \
                                                   'AUTO', NOW(), NULL)", (hostAddr, mailFrom, emailto))
         return 'greylist'
         
