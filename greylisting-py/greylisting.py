@@ -81,6 +81,7 @@ def checkWhitelisted(hostAddr):
             if CIDR(hostAddr) in CIDR(net[0]):
                 # network matches whitelist
                 return True
+            net = cur.fetchone()
 
     return False
     
